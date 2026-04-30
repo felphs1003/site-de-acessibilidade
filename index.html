@@ -1,0 +1,117 @@
+<!DOCTYPE html><html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Comunicação Assistiva</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #4facfe, #00f2fe);
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      color: #333;
+    }h1 {
+  color: white;
+  margin-bottom: 20px;
+}
+
+.container {
+  background: white;
+  padding: 20px;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  width: 90%;
+  max-width: 500px;
+  text-align: center;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  margin-top: 20px;
+}
+
+button {
+  padding: 20px;
+  border: none;
+  border-radius: 15px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+button:hover {
+  transform: scale(1.05);
+}
+
+.primary { background: #4facfe; color: white; }
+.success { background: #43e97b; }
+.warning { background: #f7971e; color: white; }
+.danger { background: #ff4b5c; color: white; }
+
+.custom {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+input {
+  flex: 1;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+}
+
+.speak-btn {
+  background: #222;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 10px;
+}
+
+.emergency {
+  margin-top: 20px;
+  background: #ff4b5c;
+  color: white;
+  width: 100%;
+  padding: 15px;
+  font-size: 18px;
+  border-radius: 15px;
+}
+
+  </style>
+</head>
+<body>  <h1>🗣 Comunicação Assistiva</h1>  <div class="container">
+    <h2>Frases rápidas</h2><div class="grid">
+  <button class="primary" onclick="falar('Olá')">Olá</button>
+  <button class="success" onclick="falar('Estou com fome')">Estou com fome</button>
+  <button class="warning" onclick="falar('Quero água')">Quero água</button>
+  <button class="primary" onclick="falar('Preciso ir ao banheiro')">Banheiro</button>
+</div>
+
+<button class="emergency" onclick="falar('Preciso de ajuda urgente')">🚨 AJUDA</button>
+
+<div class="custom">
+  <input type="text" id="texto" placeholder="Digite algo...">
+  <button class="speak-btn" onclick="falarTexto()">Falar</button>
+</div>
+
+  </div>  <script>
+    function falar(texto) {
+      const msg = new SpeechSynthesisUtterance(texto);
+      msg.lang = 'pt-BR';
+      speechSynthesis.speak(msg);
+    }
+
+    function falarTexto() {
+      const texto = document.getElementById('texto').value;
+      if (texto) falar(texto);
+    }
+  </script></body>
+</html>
