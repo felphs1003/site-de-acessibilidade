@@ -1,117 +1,191 @@
-<!DOCTYPE html><html lang="pt-br">
+<!DOCTYPE html>
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Comunicação Assistiva</title>
+  <title>CAA Digital</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #4facfe, #00f2fe);
       margin: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      color: #333;
-    }h1 {
-  color: white;
-  margin-bottom: 20px;
-}
+      background: #f5f7fa;
+      text-align: center;
+    }
 
-.container {
-  background: white;
-  padding: 20px;
-  border-radius: 20px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-  width: 90%;
-  max-width: 500px;
-  text-align: center;
-}
+    header {
+      background: #4CAF50;
+      color: white;
+      padding: 15px;
+      font-size: 24px;
+    }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 15px;
-  margin-top: 20px;
-}
+    .container {
+      padding: 20px;
+    }
 
-button {
-  padding: 20px;
-  border: none;
-  border-radius: 15px;
-  font-size: 16px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: 0.2s;
-}
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 15px;
+      margin-top: 20px;
+    }
 
-button:hover {
-  transform: scale(1.05);
-}
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      cursor: pointer;
+      transition: 0.2s;
+      font-size: 18px;
+    }
 
-.primary { background: #4facfe; color: white; }
-.success { background: #43e97b; }
-.warning { background: #f7971e; color: white; }
-.danger { background: #ff4b5c; color: white; }
+    .card:hover {
+      transform: scale(1.05);
+      background: #e8f5e9;
+    }
 
-.custom {
-  margin-top: 20px;
-  display: flex;
-  gap: 10px;
-}
+    .urgent {
+      background: #ff5252;
+      color: white;
+      font-weight: bold;
+    }
 
-input {
-  flex: 1;
-  padding: 10px;
-  border-radius: 10px;
-  border: 1px solid #ccc;
-}
+    .custom {
+      margin-top: 30px;
+    }
 
-.speak-btn {
-  background: #222;
-  color: white;
-  padding: 10px 15px;
-  border-radius: 10px;
-}
+    input {
+      padding: 10px;
+      width: 70%;
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
 
-.emergency {
-  margin-top: 20px;
-  background: #ff4b5c;
-  color: white;
-  width: 100%;
-  padding: 15px;
-  font-size: 18px;
-  border-radius: 15px;
-}
+    button {
+      padding: 10px 15px;
+      font-size: 16px;
+      border: none;
+      background: #4CAF50;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+    }
 
+    button:hover {
+      background: #45a049;
+    }
   </style>
 </head>
-<body>  <h1>🗣 Comunicação Assistiva</h1>  <div class="container">
-    <h2>Frases rápidas</h2><div class="grid">
-  <button class="primary" onclick="falar('Olá')">Olá</button>
-  <button class="success" onclick="falar('Estou com fome')">Estou com fome</button>
-  <button class="warning" onclick="falar('Quero água')">Quero água</button>
-  <button class="primary" onclick="falar('Preciso ir ao banheiro')">Banheiro</button>
+<body>
+
+<header>CAA Digital - Comunicação Assistiva</header>
+
+<div class="container">
+  <h2>Toque ou passe para ouvir</h2>
+
+  <div class="grid" id="defaultButtons"></div>
+
+  <div class="custom">
+    <h3>Frases personalizadas</h3>
+    <input type="text" id="customText" placeholder="Digite uma frase">
+    <br>
+    <button onclick="addPhrase()">Adicionar</button>
+
+    <div class="grid" id="customButtons"></div>
+  </div>
 </div>
 
-<button class="emergency" onclick="falar('Preciso de ajuda urgente')">🚨 AJUDA</button>
+<script>
+  let lastSpoken = '';
 
-<div class="custom">
-  <input type="text" id="texto" placeholder="Digite algo...">
-  <button class="speak-btn" onclick="falarTexto()">Falar</button>
-</div>
+  function speak(text) {
+    if (lastSpoken === text) return; // evita repetição contínua
+    lastSpoken = text;
 
-  </div>  <script>
-    function falar(texto) {
-      const msg = new SpeechSynthesisUtterance(texto);
-      msg.lang = 'pt-BR';
-      speechSynthesis.speak(msg);
-    }
+    window.speechSynthesis.cancel();
 
-    function falarTexto() {
-      const texto = document.getElementById('texto').value;
-      if (texto) falar(texto);
-    }
-  </script></body>
+    const speech = new SpeechSynthesisUtterance(text);
+    speech.lang = 'pt-BR';
+
+    speech.onend = () => {
+      lastSpoken = '';
+    };
+
+    window.speechSynthesis.speak(speech);
+  }
+
+  function createCard(text, extraClass = '') {
+    const div = document.createElement('div');
+    div.className = 'card ' + extraClass;
+    div.innerText = text;
+
+    // clique
+    div.onclick = () => speak(text);
+
+    // passar mouse (desktop)
+    div.onmouseenter = () => speak(text);
+
+    // toque leve (mobile)
+    div.ontouchstart = () => speak(text);
+
+    return div;
+  }
+
+  function loadDefaultButtons() {
+    const container = document.getElementById('defaultButtons');
+
+    const frases = [
+      { text: 'Olá' },
+      { text: 'Estou com fome' },
+      { text: 'Estou com sede' },
+      { text: 'Quero ir ao banheiro' },
+      { text: 'Estou com dor' },
+      { text: 'Preciso de ajuda urgente', class: 'urgent' }
+    ];
+
+    frases.forEach(f => {
+      const card = createCard(f.text, f.class || '');
+      container.appendChild(card);
+    });
+  }
+
+  function addPhrase() {
+    const input = document.getElementById('customText');
+    const text = input.value.trim();
+
+    if (text === '') return;
+
+    const container = document.getElementById('customButtons');
+
+    const card = createCard(text);
+    container.appendChild(card);
+
+    savePhrase(text);
+    input.value = '';
+  }
+
+  function savePhrase(text) {
+    let phrases = JSON.parse(localStorage.getItem('phrases')) || [];
+    phrases.push(text);
+    localStorage.setItem('phrases', JSON.stringify(phrases));
+  }
+
+  function loadPhrases() {
+    let phrases = JSON.parse(localStorage.getItem('phrases')) || [];
+    const container = document.getElementById('customButtons');
+
+    phrases.forEach(text => {
+      const card = createCard(text);
+      container.appendChild(card);
+    });
+  }
+
+  window.onload = () => {
+    loadDefaultButtons();
+    loadPhrases();
+  };
+</script>
+
+</body>
 </html>
